@@ -168,13 +168,29 @@ else:
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
-for g in range(start_epoch, 100000):
+for g in range(start_epoch, 300000):
     g_noise = np.random.normal(0, 1, size = [batch_size, g_dim])
     real_image_batch = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
+    # real_image_batch = np.transpose(real_image_batch, (0, 3, 1, 2))
+    # real_image_batch = np.concatenate((real_image_batch, real_image_batch), axis=1)
+    # real_image_batch = np.concatenate((real_image_batch, real_image_batch), axis=1)
+    # real_image_batch = np.transpose(real_image_batch, (0, 2, 3, 1))
+    real_image_batch2 = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
+    real_image_batch3 = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
+    real_image_batch4 = mnist.train.next_batch(batch_size)[0].reshape([batch_size, 28, 28, 1])
+
     real_image_batch = np.transpose(real_image_batch, (0, 3, 1, 2))
-    real_image_batch = np.concatenate((real_image_batch, real_image_batch), axis=1)
-    real_image_batch = np.concatenate((real_image_batch, real_image_batch), axis=1)
+    real_image_batch2 = np.transpose(real_image_batch2, (0, 3, 1, 2))
+    real_image_batch3 = np.transpose(real_image_batch3, (0, 3, 1, 2))
+    real_image_batch4 = np.transpose(real_image_batch4, (0, 3, 1, 2))
+
+    real_image_batch = np.concatenate((real_image_batch, real_image_batch2), axis=1)
+    real_image_batch3 = np.concatenate((real_image_batch3, real_image_batch4), axis=1)
+
+    real_image_batch = np.concatenate((real_image_batch, real_image_batch3), axis=1)
+
     real_image_batch = np.transpose(real_image_batch, (0, 2, 3, 1))
+
     sess.run(d_clip)
     _, dLoss, __, gLoss = sess.run([d_trainner, D_loss, g_trainner, G_loss], feed_dict={g_placeholder:g_noise, d_placeholder:real_image_batch})
 
